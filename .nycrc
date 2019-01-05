@@ -1,0 +1,6 @@
+{
+  "extension": [".ts"],
+  "reporter": ["lcov"],
+  "include": "src",
+  "exclude": "**/*tests.*"
+}
