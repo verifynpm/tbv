@@ -21,7 +21,6 @@ export class Verifier extends EventEmitter {
     this.emit('progress', this.progress);
   }
 
-  async test() {}
 
   async verify(packageName: string, version?: string): Promise<Result> {
     this.progress = createVerifyProgress();

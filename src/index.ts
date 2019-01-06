@@ -1,5 +1,6 @@
 import { verify } from './verify';
 import { Verifier } from './verifier';
+import { Tester } from './tester';
 
 // export function reverseString(forward: string): string {
 //   if (!forward) return forward;
@@ -13,24 +14,24 @@ import { Verifier } from './verifier';
 // console.log('This is the example typescript application!');
 
 const task = process.argv[2];
-const [packageName, version] = process.argv[3].split('@');
+//const [packageName, version] = process.argv[3].split('@');
 
-const verifier = new Verifier();
+const tester = new Tester();
 
-// verifier.on('theerror', console.error);
-// verifier.on('warning', console.error);
-// verifier.on('notice', console.log);
-// verifier.on('trace', console.trace);
+// tester.on('theerror', console.error);
+// tester.on('warning', console.error);
+// tester.on('notice', console.log);
+// tester.on('trace', console.trace);
 
-verifier.on('progress', progress => verifier.printSteps(progress));
+tester.on('progress', progress => tester.printSteps(progress));
 
 //console.log({ task, packageName, version });
 
-if (task === 'verify') {
+//if (task === 'verify') {
   (async () => {
-    const result = await verifier.verify(packageName, version);
+    const result = await tester.test();
 
-    if (result.success) {
+    if (result) {
       console.log();
       console.log('\x1b[32mPASSED\x1b[0m');
       console.log();
@@ -41,4 +42,4 @@ if (task === 'verify') {
       process.exit(1);
     }
   })();
-}
+//}
