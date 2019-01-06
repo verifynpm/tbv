@@ -289,7 +289,7 @@ function createProgress(): TestProgress {
     },
     install: {
       status: 'pending',
-      title: 'Install npm packages',
+      title: 'Install dependencies',
     },
     packRemote: {
       status: 'pending',
