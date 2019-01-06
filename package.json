@@ -1,7 +1,7 @@
 {
-  "name": "typescript-application",
+  "name": "tbv",
   "version": "0.0.1",
-  "description": "Base project for creating a console application in Typescript",
+  "description": "Package verification for npm",
   "main": "./lib/index.js",
   "scripts": {
     "prebuild": "npm run lint && rm -rf lib/*",
@@ -13,7 +13,11 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/skonves/tbv"
+  },
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/del": "^3.0.1",
