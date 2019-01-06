@@ -19,6 +19,9 @@ export class Tester extends Engine<TestProgress> {
     const { remoteShasum } = await this.packRemote(tempDir);
     if (this.hasFailed) return false;
 
+    this.compare(localShasum, remoteShasum);
+    if (this.hasFailed) return false;
+
     return true;
   }
 
@@ -257,6 +260,16 @@ export class Tester extends Engine<TestProgress> {
     this.updateProgress('packRemote', 'pass');
     process.chdir(cwd);
     return { remoteShasum };
+  }
+
+  private compare(localShasum: string, remoteShasum: string): void {
+    this.updateProgress('compare', 'working');
+
+    if (localShasum === remoteShasum) {
+      this.updateProgress('compare', 'pass');
+    } else {
+      this.updateProgress('compare', 'fail', 'Shasums do not match');
+    }
   }
 }
 
