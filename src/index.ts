@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { Verifier } from './verifier';
 import { Tester } from './tester';
 
