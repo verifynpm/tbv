@@ -6,7 +6,7 @@ Package verification for npm.
 
 ### Verify packages from npm
 
-1.  Install globally: `npm i -g nvm`
+1.  Install globally: `npm i -g tbv`
 1.  Verify a package: `tbv verify {package}`
   * To verify latest, use package name only (eg. `redux`)
   * To verify a specific version, use name@version (eg. `redux@4.0.1`)
