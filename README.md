@@ -1,16 +1,21 @@
-# Typescript Application
+# TBV (Trust but Verify)
 
-Base project for creating a console application in Typescript
+Package verification for npm.
 
 ## How to:
 
-### Run this project
+### Verify packages from npm
 
-1.  Build the code: `npm run build`
-1.  Run it! `npm start`
+1.  Install globally: `npm i -g nvm`
+1.  Verify a package: `tbv verify {package}`
+  * To verify latest, use package name only (eg. `redux`)
+  * To verify a specific version, use name@version (eg. `redux@4.0.1`)
 
-### Create and run tests
+### Test a package before publication
 
-1.  Add tests by creating files with the `.tests.ts` suffix
-1.  Run the tests: `npm t`
-1.  Test coverage can be viewed at `/coverage/lcov-report/index.html`
+1.  Ensure that all commits have been pushed.
+1.  Test local directory: `tbv test`
+
+### Build from source
+
+1.  Run the build script: `npm run build`
