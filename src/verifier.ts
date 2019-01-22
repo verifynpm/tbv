@@ -282,6 +282,7 @@ export class Verifier extends Engine<VerifyProgress> {
     try {
       remoteShasum = /shasum:\s+([0-9a-f]{40})/.exec(stdout)[1];
     } catch (parseErr) {
+      this.failure(`Error parsing shasum from pack output:  ${stdout}`);
       this.updateProgress(
         'pack',
         'fail',
