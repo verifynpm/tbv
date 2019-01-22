@@ -6,6 +6,9 @@ export class Verifier extends Engine<VerifyProgress> {
     this.hasFailed = false;
     this.hasPrinted = false;
 
+    this.exec('node --version');
+    this.exec('npm --version');
+
     const { resolvedVersion, repoUrl, gitHead, shasum } = await this.registry(
       packageName,
       version,
@@ -287,6 +290,8 @@ export class Verifier extends Engine<VerifyProgress> {
       process.chdir(cwd);
       return {};
     }
+
+    this.notice(`remoteShasum: ${remoteShasum}`);
 
     this.updateProgress('pack', 'pass');
     process.chdir(cwd);
