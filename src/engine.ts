@@ -70,7 +70,7 @@ export class Engine<
         if (error) {
           reject(stderr);
         } else {
-          resolve(stderr + stdout);
+          resolve(stdout);
         }
       });
     });
