@@ -4,10 +4,18 @@ import { Verifier } from './verifier';
 import { Tester } from './tester';
 
 const task = process.argv[2];
+const mode = process.argv[4];
 
 if (task === 'test') {
   const tester = new Tester();
-  tester.on('progress', progress => tester.printSteps(progress));
+  if (mode === '--verbose') {
+    tester.on('failure', console.error);
+    tester.on('warning', console.error);
+    tester.on('notice', console.log);
+    tester.on('trace', console.log);
+  } else {
+    tester.on('progress', progress => tester.printSteps(progress));
+  }
   tester.test().then(success => {
     if (success) {
       console.log();
@@ -22,7 +30,14 @@ if (task === 'test') {
   });
 } else if (task === 'verify') {
   const verifier = new Verifier();
-  verifier.on('progress', progress => verifier.printSteps(progress));
+  if (mode === '--verbose') {
+    verifier.on('failure', console.error);
+    verifier.on('warning', console.error);
+    verifier.on('notice', console.log);
+    verifier.on('trace', console.log);
+  } else {
+    verifier.on('progress', progress => verifier.printSteps(progress));
+  }
 
   const [packageName, version] = process.argv[3].split('@');
   verifier.verify(packageName, version).then(success => {
