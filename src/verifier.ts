@@ -9,10 +9,13 @@ export class Verifier extends Engine<VerifyProgress> {
     this.exec('node --version');
     this.exec('npm --version');
 
-    const { resolvedVersion, repoUrl, gitHead, shasum } = await this.registry(
-      packageName,
-      version,
-    );
+    const {
+      resolvedVersion,
+      repoUrl,
+      gitHead,
+      shasum,
+      tarballUri,
+    } = await this.registry(packageName, version);
     if (this.hasFailed) return false;
 
     const { tempDir, refspec } = await this.checkout(
@@ -39,6 +42,7 @@ export class Verifier extends Engine<VerifyProgress> {
     repoUrl?: string;
     shasum?: string;
     gitHead?: string;
+    tarballUri?: string;
   }> {
     this.updateProgress('registry', 'working');
 
@@ -133,7 +137,11 @@ export class Verifier extends Engine<VerifyProgress> {
     const shasum =
       versionInfo['_shasum'] || (versionInfo.dist && versionInfo.dist.shasum);
 
-    return { resolvedVersion, repoUrl, shasum };
+    const tarballUri =
+      versionInfo['_shasum'] ||
+      (versionInfo.dist && versionInfo.dist.tarballUri);
+
+    return { resolvedVersion, repoUrl, shasum, tarballUri };
   }
 
   private async checkout(
