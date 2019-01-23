@@ -30,6 +30,7 @@
     "@types/del": "^3.0.1",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.15",
+    "@types/tar-stream": "^1.6.0",
     "chai": "^4.2.0",
     "mocha": "^5.2.0",
     "nyc": "^13.0.1",
@@ -40,6 +41,8 @@
     "typescript": "^3.2.1"
   },
   "dependencies": {
-    "axios": "^0.18.0"
+    "axios": "^0.18.0",
+    "gunzip-maybe": "^1.4.1",
+    "tar-stream": "^1.6.2"
   }
 }
