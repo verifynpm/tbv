@@ -255,7 +255,7 @@ export class Verifier extends Engine<VerifyProgress> {
     let stdout: string = null;
     let failedWithoutDependencies = false;
     try {
-      stdout = await this.exec(`npm pack`);
+      stdout = await this.exec(`npm pack --unsafe-perm`);
       this.updateProgress('install', 'skipped');
     } catch (err) {
       failedWithoutDependencies = true;
@@ -281,7 +281,7 @@ export class Verifier extends Engine<VerifyProgress> {
       // npm pack (again)
       try {
         this.updateProgress('pack', 'working');
-        stdout = await this.exec(`npm pack`);
+        stdout = await this.exec(`npm pack --unsafe-perm`);
       } catch (err) {
         this.updateProgress(
           'pack',
