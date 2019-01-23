@@ -1,4 +1,10 @@
 import { Engine, Step } from './engine';
+import { join } from 'path';
+import {
+  compareManifests,
+  getManifestFromUri,
+  getManifestFromFile,
+} from './utils';
 
 export class Verifier extends Engine<VerifyProgress> {
   async verify(packageName: string, version: string): Promise<boolean> {
@@ -25,10 +31,10 @@ export class Verifier extends Engine<VerifyProgress> {
     );
     if (this.hasFailed) return false;
 
-    const { remoteShasum } = await this.pack(tempDir);
+    const { outputFile } = await this.pack(tempDir);
     if (this.hasFailed) return false;
 
-    this.compare(shasum, remoteShasum);
+    await this.compare(tarballUri, tempDir, outputFile);
     if (this.hasFailed) return false;
 
     return true;
@@ -137,9 +143,7 @@ export class Verifier extends Engine<VerifyProgress> {
     const shasum =
       versionInfo['_shasum'] || (versionInfo.dist && versionInfo.dist.shasum);
 
-    const tarballUri =
-      versionInfo['_shasum'] ||
-      (versionInfo.dist && versionInfo.dist.tarballUri);
+    const tarballUri = versionInfo.dist && versionInfo.dist.tarball;
 
     return { resolvedVersion, repoUrl, shasum, tarballUri };
   }
@@ -241,7 +245,7 @@ export class Verifier extends Engine<VerifyProgress> {
     return { tempDir, refspec };
   }
 
-  private async pack(tempDir: string): Promise<{ remoteShasum?: string }> {
+  private async pack(tempDir: string): Promise<{ outputFile?: string }> {
     this.updateProgress('pack', 'working');
 
     const cwd = process.cwd();
@@ -251,7 +255,7 @@ export class Verifier extends Engine<VerifyProgress> {
     let stdout: string = null;
     let failedWithoutDependencies = false;
     try {
-      stdout = await this.exec(`npm pack --dry-run`);
+      stdout = await this.exec(`npm pack`);
       this.updateProgress('install', 'skipped');
     } catch (err) {
       failedWithoutDependencies = true;
@@ -265,7 +269,11 @@ export class Verifier extends Engine<VerifyProgress> {
         await this.exec(`npm ci`);
         this.updateProgress('install', 'pass');
       } catch (err) {
-        this.updateProgress('install', 'fail', 'Error installing dependencies');
+        this.updateProgress(
+          'install',
+          'fail',
+          `Error installing dependencies: ${err.message}`,
+        );
         process.chdir(cwd);
         return {};
       }
@@ -273,7 +281,7 @@ export class Verifier extends Engine<VerifyProgress> {
       // npm pack (again)
       try {
         this.updateProgress('pack', 'working');
-        stdout = await this.exec(`npm pack --dry-run`);
+        stdout = await this.exec(`npm pack`);
       } catch (err) {
         this.updateProgress(
           'pack',
@@ -285,35 +293,46 @@ export class Verifier extends Engine<VerifyProgress> {
       }
     }
 
-    // parse shasum from stdout
-    let remoteShasum = '';
-    try {
-      remoteShasum = /shasum:\s+([0-9a-f]{40})/.exec(stdout)[1];
-    } catch (parseErr) {
-      this.failure(`Error parsing shasum from pack output:  ${stdout}`);
-      this.updateProgress(
-        'pack',
-        'fail',
-        'Error parsing shasum from pack output',
-      );
-      process.chdir(cwd);
-      return {};
-    }
-
-    this.notice(`remoteShasum: ${remoteShasum}`);
-
     this.updateProgress('pack', 'pass');
     process.chdir(cwd);
-    return { remoteShasum };
+    return {
+      outputFile: stdout
+        .trim()
+        .split('\n')
+        .reverse()[0]
+        .trim(),
+    };
   }
 
-  private compare(registryShasum: string, remoteShasum: string): void {
+  private async compare(
+    tarballUri: string,
+    tempDir: string,
+    outputFile: string,
+  ): Promise<void> {
     this.updateProgress('compare', 'working');
 
-    if (registryShasum === remoteShasum) {
-      this.updateProgress('compare', 'pass');
-    } else {
-      this.updateProgress('compare', 'fail', 'Shasums do not match');
+    const [generatedManifest, publishedManifest] = await Promise.all([
+      getManifestFromFile(join(tempDir, outputFile)),
+      getManifestFromUri(tarballUri),
+    ]);
+
+    try {
+      const diff = compareManifests(generatedManifest, publishedManifest);
+      this.trace(JSON.stringify(diff, null, 2));
+
+      if (!diff.added.length && !diff.modified.length && !diff.removed.length) {
+        this.updateProgress('compare', 'pass');
+      } else {
+        this.updateProgress(
+          'compare',
+          'fail',
+          `${diff.added.length} files added, ${
+            diff.modified.length
+          } files modified, and ${diff.removed.length} files removed.`,
+        );
+      }
+    } catch (err) {
+      this.updateProgress('compare', 'fail', `${err}`);
     }
   }
 }
@@ -346,7 +365,7 @@ function createProgress(): VerifyProgress {
     },
     compare: {
       status: 'pending',
-      title: 'Compare shasums',
+      title: 'Compare package contents',
     },
   };
 }
