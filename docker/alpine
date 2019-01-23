@@ -1,0 +1,13 @@
+FROM node:8-alpine
+WORKDIR /usr/src/app
+
+RUN apk add --no-cache 'git=2.18.1-r0' 'nodejs=8.14.0-r0'
+
+COPY package*.json ts*.json ./
+COPY src/* ./src/
+RUN npm ci && \
+npm run build && \
+rm -rf node_modules && \
+npm i -g .
+
+ENTRYPOINT tbv verify $0 $1

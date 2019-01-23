@@ -1,0 +1,13 @@
+FROM fedora:29
+WORKDIR /usr/src/app
+
+RUN yum install -y nodejs git
+
+COPY package*.json ts*.json ./
+COPY src/* ./src/
+RUN npm ci && \
+npm run build && \
+rm -rf node_modules && \
+npm i -g .
+
+ENTRYPOINT tbv verify $0 $1

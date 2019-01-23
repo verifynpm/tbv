@@ -1,0 +1,11 @@
+FROM node:carbon-jessie
+WORKDIR /usr/src/app
+
+COPY package*.json ts*.json ./
+COPY src/* ./src/
+RUN npm ci && \
+npm run build && \
+rm -rf node_modules && \
+npm i -g .
+
+ENTRYPOINT tbv verify $0 $1

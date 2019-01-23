@@ -9,7 +9,13 @@
     "lint": "tslint -c tslint.json -e 'node_modules/**/*' '**/*.ts'",
     "start": "node ./lib/index.js",
     "test": "NODE_ENV=test nyc mocha --require source-map-support/register --require ts-node/register --recursive './src/**/*.tests.ts'",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "docker-build:alpine": "docker build -t tbv:alpine -f ./docker/alpine .",
+    "docker-build:fedora": "docker build -t tbv:fedora -f ./docker/fedora .",
+    "docker-build:jessie": "docker build -t tbv:jessie -f ./docker/jessie .",
+    "docker-run:alpine": "docker run --rm tbv:alpine",
+    "docker-run:fedora": "docker run --rm tbv:fedora",
+    "docker-run:jessie": "docker run --rm tbv:jessie"
   },
   "keywords": [],
   "author": "",
