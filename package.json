@@ -1,6 +1,6 @@
 {
   "name": "tbv",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "Package verification for npm",
   "main": "./lib/index.js",
   "scripts": {
