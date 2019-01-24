@@ -43,7 +43,6 @@
   "dependencies": {
     "axios": "^0.18.0",
     "gunzip-maybe": "^1.4.1",
-    "npm": "^5.7.1",
     "tar-stream": "^1.6.2"
   }
 }
