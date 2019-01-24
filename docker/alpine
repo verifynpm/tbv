@@ -9,5 +9,6 @@ RUN npm ci && \
 npm run build && \
 rm -rf node_modules && \
 npm i -g .
+RUN npm i -g npm@5.6.0 # ensure npm ci cannot run from global
 
 ENTRYPOINT tbv verify $0 $1
