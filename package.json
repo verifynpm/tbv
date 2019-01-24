@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "cipm": "^2.0.0",
     "gunzip-maybe": "^1.4.1",
     "tar-stream": "^1.6.2"
   }
