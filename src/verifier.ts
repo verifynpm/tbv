@@ -7,13 +7,15 @@ import {
 } from './utils';
 
 export class Verifier extends Engine<VerifyProgress> {
+  private npm: string = 'npm';
   async verify(packageName: string, version: string): Promise<boolean> {
     this.progress = createProgress();
     this.hasFailed = false;
     this.hasPrinted = false;
 
     this.exec('node --version');
-    this.exec('npm --version');
+    this.npm = join(process.cwd(), 'node_modules', '.bin', 'npm');
+    this.exec(`${this.npm} --version`);
 
     const {
       resolvedVersion,
@@ -255,7 +257,7 @@ export class Verifier extends Engine<VerifyProgress> {
     let stdout: string = null;
     let failedWithoutDependencies = false;
     try {
-      stdout = await this.exec(`npm pack --unsafe-perm`);
+      stdout = await this.exec(`${this.npm} pack --unsafe-perm`);
       this.updateProgress('install', 'skipped');
     } catch (err) {
       failedWithoutDependencies = true;
@@ -266,7 +268,7 @@ export class Verifier extends Engine<VerifyProgress> {
       try {
         this.updateProgress('pack', 'pending', 'Waiting for dependencies');
         this.updateProgress('install', 'working');
-        await this.exec(`npm ci`);
+        await this.exec(`${this.npm} ci`);
         this.updateProgress('install', 'pass');
       } catch (err) {
         this.updateProgress(
@@ -281,7 +283,7 @@ export class Verifier extends Engine<VerifyProgress> {
       // npm pack (again)
       try {
         this.updateProgress('pack', 'working');
-        stdout = await this.exec(`npm pack --unsafe-perm`);
+        stdout = await this.exec(`${this.npm} pack --unsafe-perm`);
       } catch (err) {
         this.updateProgress(
           'pack',
