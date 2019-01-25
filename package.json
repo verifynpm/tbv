@@ -4,6 +4,7 @@
   "description": "Package verification for npm",
   "main": "./lib/index.js",
   "scripts": {
+    "ci": "cipm",
     "prebuild": "npm run lint && rm -rf lib/*",
     "build": "tsc",
     "lint": "tslint -c tslint.json -e 'node_modules/**/*' '**/*.ts'",
@@ -30,6 +31,7 @@
     "@types/del": "^3.0.1",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.15",
+    "@types/semver": "^5.5.0",
     "@types/tar-stream": "^1.6.0",
     "chai": "^4.2.0",
     "mocha": "^5.2.0",
@@ -44,6 +46,7 @@
     "axios": "^0.18.0",
     "cipm": "^2.0.0",
     "gunzip-maybe": "^1.4.1",
+    "semver": "^5.6.0",
     "tar-stream": "^1.6.2"
   }
 }
