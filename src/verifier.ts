@@ -10,7 +10,6 @@ import {
 export class Verifier extends Engine<VerifyProgress> {
   private nodeVersion = '';
   private npmVersion = '';
-  private nmbin = '';
   async verify(packageName: string, version: string): Promise<boolean> {
     this.progress = createProgress();
     this.hasFailed = false;
@@ -18,7 +17,6 @@ export class Verifier extends Engine<VerifyProgress> {
 
     this.nodeVersion = await this.exec('node --version');
     this.npmVersion = await this.exec('npm --version');
-    this.nmbin = join(process.cwd(), 'node_modules', '.bin');
 
     const {
       resolvedVersion,
@@ -343,7 +341,7 @@ export class Verifier extends Engine<VerifyProgress> {
 
   private async npmci(): Promise<void> {
     if (compare(this.npmVersion, '5.7.0') < 0) {
-      await this.exec(join(this.nmbin, 'cipm'));
+      await this.exec('cipm');
     } else {
       await this.exec('npm ci');
     }
