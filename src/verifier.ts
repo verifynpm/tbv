@@ -1,5 +1,6 @@
 import { Engine, Step } from './engine';
 import { join } from 'path';
+import { compare } from 'semver';
 import {
   compareManifests,
   getManifestFromUri,
@@ -7,15 +8,17 @@ import {
 } from './utils';
 
 export class Verifier extends Engine<VerifyProgress> {
-  private cipm = '';
+  private nodeVersion = '';
+  private npmVersion = '';
+  private nmbin = '';
   async verify(packageName: string, version: string): Promise<boolean> {
     this.progress = createProgress();
     this.hasFailed = false;
     this.hasPrinted = false;
 
-    this.exec('node --version');
-    this.exec('npm --version');
-    this.cipm = join(process.cwd(), 'node_modules', '.bin', 'cipm');
+    this.nodeVersion = await this.exec('node --version');
+    this.npmVersion = await this.exec('npm --version');
+    this.nmbin = join(process.cwd(), 'node_modules', '.bin');
 
     const {
       resolvedVersion,
@@ -268,7 +271,7 @@ export class Verifier extends Engine<VerifyProgress> {
       try {
         this.updateProgress('pack', 'pending', 'Waiting for dependencies');
         this.updateProgress('install', 'working');
-        await this.exec(`${this.cipm} --loglevel=notice`);
+        await this.npmci();
         this.updateProgress('install', 'pass');
       } catch (err) {
         this.updateProgress(
@@ -335,6 +338,14 @@ export class Verifier extends Engine<VerifyProgress> {
       }
     } catch (err) {
       this.updateProgress('compare', 'fail', `${err}`);
+    }
+  }
+
+  private async npmci(): Promise<void> {
+    if (compare(this.npmVersion, '5.7.0') < 0) {
+      await this.exec(join(this.nmbin, 'cipm'));
+    } else {
+      await this.exec('npm ci');
     }
   }
 }
