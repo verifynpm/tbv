@@ -268,7 +268,7 @@ export class Verifier extends Engine<VerifyProgress> {
       try {
         this.updateProgress('pack', 'pending', 'Waiting for dependencies');
         this.updateProgress('install', 'working');
-        await this.exec(this.cipm);
+        await this.exec(`${this.cipm} --loglevel=notice`);
         this.updateProgress('install', 'pass');
       } catch (err) {
         this.updateProgress(
