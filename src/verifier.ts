@@ -27,20 +27,26 @@ export class Verifier extends Engine<VerifyProgress> {
     } = await this.registry(packageName, version);
     if (this.hasFailed) return false;
 
-    const { tempDir, refspec } = await this.checkout(
-      repoUrl,
-      gitHead,
-      resolvedVersion,
-    );
-    if (this.hasFailed) return false;
+    let cleanupDir: string;
+    try {
+      const { tempDir, refspec } = await this.checkout(
+        repoUrl,
+        gitHead,
+        resolvedVersion,
+      );
+      cleanupDir = tempDir;
+      if (this.hasFailed) return false;
 
-    const { outputFile } = await this.pack(tempDir);
-    if (this.hasFailed) return false;
+      const { outputFile } = await this.pack(tempDir);
+      if (this.hasFailed) return false;
 
-    await this.compare(tarballUri, tempDir, outputFile);
-    if (this.hasFailed) return false;
+      await this.compare(tarballUri, tempDir, outputFile);
+      if (this.hasFailed) return false;
 
-    return true;
+      return true;
+    } finally {
+      if (cleanupDir) this.exec(`rm -rf ${cleanupDir}`);
+    }
   }
 
   private async registry(
