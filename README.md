@@ -1,4 +1,5 @@
-![verification](https://api.verifynpm.com/v0/packages/tbv/badge.svg)
+[![npm](https://img.shields.io/npm/v/tbv.svg)](https://www.npmjs.com/package/tbv)
+[![verification](https://api.verifynpm.com/v0/packages/tbv/badge.svg)](https://api.verifynpm.com/v0/packages/tbv)
 
 # TBV (Trust but Verify)
 
