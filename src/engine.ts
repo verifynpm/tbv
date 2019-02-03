@@ -88,7 +88,6 @@ export class Engine<
           os.EOL,
       );
       res = await axios.get(url);
-      this.trace(res.data);
       return res.data;
     } catch (err) {
       this.failure(err.message);
