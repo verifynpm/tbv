@@ -1,3 +1,5 @@
+![verification](https://api.verifynpm.com/v0/packages/tbv/badge.svg)
+
 # TBV (Trust but Verify)
 
 Package verification for npm.
