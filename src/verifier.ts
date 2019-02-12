@@ -6,6 +6,7 @@ import {
   getManifestFromUri,
   getManifestFromFile,
 } from './utils';
+import { parse as parseUrl } from 'url';
 
 export class Verifier extends Engine<VerifyProgress> {
   private nodeVersion = '';
@@ -131,9 +132,9 @@ export class Verifier extends Engine<VerifyProgress> {
       );
       return {};
     }
-    const repoUrl = versionInfo.repository.url.startsWith('git+')
-      ? versionInfo.repository.url.substring(4)
-      : versionInfo.repository.url;
+
+    const url = parseUrl(versionInfo.repository.url);
+    const repoUrl = `https://${url.host}${url.path}`;
 
     this.updateProgress('repo', 'pass');
     this.updateProgress('gitHead', 'working');
