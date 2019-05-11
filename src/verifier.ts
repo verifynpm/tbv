@@ -26,7 +26,7 @@ export class Verifier extends Engine<VerifyProgress> {
       gitHead,
       shasum,
       tarballUri,
-    } = await this.registry(scope, packageName, version);
+    } = await this.registry(packageName, version, scope);
     if (this.hasFailed) return false;
 
     let cleanupDir: string;
@@ -64,9 +64,9 @@ export class Verifier extends Engine<VerifyProgress> {
   }
 
   private async registry(
-      scope: string | undefined,
       packageName: string,
       version: string,
+      scope?: string,
   ): Promise<{
     resolvedVersion?: string;
     repoUrl?: string;
