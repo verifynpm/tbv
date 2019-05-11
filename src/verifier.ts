@@ -11,7 +11,8 @@ import { parse as parseUrl } from 'url';
 export class Verifier extends Engine<VerifyProgress> {
   private nodeVersion = '';
   private npmVersion = '';
-  async verify(packageName: string, version: string): Promise<boolean> {
+  async verify(packageDescriptor: string): Promise<boolean> {
+    const {scope, packageName, version} = this.splitPackageDescriptor(packageDescriptor)
     this.progress = createProgress();
     this.hasFailed = false;
     this.hasPrinted = false;
@@ -25,7 +26,7 @@ export class Verifier extends Engine<VerifyProgress> {
       gitHead,
       shasum,
       tarballUri,
-    } = await this.registry(packageName, version);
+    } = await this.registry(scope, packageName, version);
     if (this.hasFailed) return false;
 
     let cleanupDir: string;
@@ -50,9 +51,22 @@ export class Verifier extends Engine<VerifyProgress> {
     }
   }
 
+  private splitPackageDescriptor(packageDescriptor: string): {scope?: string, packageName: string, version: string} {
+    if (packageDescriptor.startsWith('@')) {
+      const scopeSplit = packageDescriptor.split('/');
+      const packageSplit = scopeSplit[1].split('@');
+      return {scope: scopeSplit[0], packageName: packageSplit[0], version: packageSplit[1]}
+    }
+    else {
+        let packageSplit = packageDescriptor.split('@');
+        return {packageName: packageSplit[0], version: packageSplit[1]};
+    }
+  }
+
   private async registry(
-    packageName: string,
-    version: string,
+      scope: string | undefined,
+      packageName: string,
+      version: string,
   ): Promise<{
     resolvedVersion?: string;
     repoUrl?: string;
@@ -65,7 +79,8 @@ export class Verifier extends Engine<VerifyProgress> {
     // Get package info
     let info: any;
     try {
-      info = await this.get(`https://registry.npmjs.com/${packageName}`);
+      let path = scope != undefined ? `${scope}/${packageName}` : `${packageName}`;
+      info = await this.get(`https://registry.npmjs.com/${path}`);
     } catch (err) {
       this.updateProgress(
         'registry',
