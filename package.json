@@ -7,7 +7,7 @@
     "ci": "cipm",
     "prebuild": "npm run lint && rm -rf lib/*",
     "build": "tsc",
-    "lint": "tslint -c tslint.json -e 'node_modules/**/*' '**/*.ts'",
+    "lint": "tslint --project .",
     "start": "node ./lib/index.js",
     "test": "NODE_ENV=test nyc mocha --require source-map-support/register --require ts-node/register --recursive './src/**/*.tests.ts'",
     "prepack": "npm run build",
