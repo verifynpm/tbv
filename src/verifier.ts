@@ -79,7 +79,7 @@ export class Verifier extends Engine<VerifyProgress> {
     // Get package info
     let info: any;
     try {
-      let path = scope != undefined ? `${scope}/${packageName}` : `${packageName}`;
+      const path = scope != undefined ? `${scope}/${packageName}` : `${packageName}`;
       info = await this.get(`https://registry.npmjs.com/${path}`);
     } catch (err) {
       this.updateProgress(
