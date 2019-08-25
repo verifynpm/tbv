@@ -39,8 +39,8 @@ if (task === 'test') {
     verifier.on('progress', progress => verifier.printSteps(progress));
   }
 
-  const [packageName, version] = process.argv[3].split('@');
-  verifier.verify(packageName, version).then(success => {
+  const packageDescriptor = process.argv[3];
+  verifier.verify(packageDescriptor).then(success => {
     if (success) {
       console.log();
       console.log('\x1b[32mPASSED\x1b[0m');
