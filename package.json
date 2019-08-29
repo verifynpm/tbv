@@ -1,13 +1,14 @@
 {
   "name": "tbv",
-  "version": "0.3.6",
+  "version": "0.4.0",
   "description": "Package verification for npm",
   "main": "./lib/index.js",
   "scripts": {
     "ci": "cipm",
     "prebuild": "npm run lint && rm -rf lib/*",
     "build": "tsc",
-    "lint": "tslint -c tslint.json -e 'node_modules/**/*' '**/*.ts'",
+    "lint": "tslint --project .",
+    "lint-fix": "tslint --project . --fix",
     "format": "node ./node_modules/prettier/bin-prettier.js src/* --write && [ ! \"$(git status src/ --porcelain)\" ]",
     "start": "node ./lib/index.js",
     "test": "NODE_ENV=test nyc mocha --require source-map-support/register --require ts-node/register --recursive './src/**/*.tests.ts'",
