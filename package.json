@@ -9,6 +9,7 @@
     "build": "tsc",
     "lint": "tslint --project .",
     "lint-fix": "tslint --project . --fix",
+    "format": "prettier 'src/*' --write && [ ! \"$(git status src/ --porcelain)\" ]",
     "start": "node ./lib/index.js",
     "test": "NODE_ENV=test nyc mocha --require source-map-support/register --require ts-node/register --recursive './src/**/*.tests.ts'",
     "prepack": "npm run build",
